@@ -2,7 +2,7 @@ function init() {
     //dropdown
     var select = d3.select("#selDataset");
     //Get sample names
-    d3.json("samples.json").then((data) {
+    d3.json("samples.json").then(data=> {
         var sampleNames = data.names;
         console.log(data);
 
@@ -21,7 +21,7 @@ function init() {
 }
 //Display the sample metadata, i.e., an individual's demographic information
 function buildPanel(sample) {
-    d3.json("samples.json").then((data) {
+    d3.json("samples.json").then(data=> {
         var sampleMetadata = data.metadata;
         console.log(sampleMetadata);
         //filter id to match user id
@@ -37,23 +37,27 @@ function buildPanel(sample) {
 
 }
 
-function buildCharts(sample) {
-    d3.json("samples.json").then((data) => {
+function buildCharts(sampleid) {
+    d3.json("samples.json").then(data => {
         var sampleSamples = data.samples;
         // console.log(sampleSamples);
-        var sampleArray = sampleSample.filter(sample => sample.id == option);
+        var sampleArray = sampleSamples.filter(sample => sample.id == sampleid);
         console.log(sampleArray);
         //selectFirstElement from filtered sample
         var result = sampleArray[0];
         // Use otu_ids as the labels for the bar chart.
-        const [otu_ids, otu_labels, sample_values] = [
-            .slice(0,10)
-            .map((i) => "OTU" + i.toSting())
-            .reverse(),
-            result.otu_labels.slice(0,10).reverse(),
-            result.sample_values.slice(0,10).reverse(),
+        // const [otu_ids, otu_labels, sample_values] = [result.otu_ids.slice(0,10) .map((i) => "OTU" + i.toString()).reverse(),
+        //     result.otu_labels.slice(0,10).reverse(),
+        //     result.sample_values.slice(0,10).reverse(),
         
-        ];
+        // ];
+        otuids1 = result.otu_ids
+        sv1 = result.sample_values
+        ol1 = result.otu_labels
+        console.log(otuids1)
+        otuids = result.otu_ids.map(i => `OTU ${i}`);
+        otuLabels=result.otu_labels;
+        sampleValues=result.sample_values;
 
         // var y = sampleArray.map(row => row.otu_ids);
         // var y1 = []
@@ -75,42 +79,44 @@ function buildCharts(sample) {
     
 // //Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
         let trace1 = {
-             x: sample_values,
-             y: otu_ids,
-            text: otu_labels,
-            type:"bar:",
-            orientation:"h",
+             x: sampleValues.slice(0,10).reverse(),
+             y: otuids.slice(0,10).reverse(),
+            text: otuLabels.slice(0,10).reverse(),
+            type:"bar",
+            orientation:"h"
         };
 
         var info = [trace1];
 
         let layout = {
-            title: "Bar",
-            color: blue 
+            title: "10 OTU",
+            height: 500,
+            width: 500
         };
         Plotly.newPlot("bar", info, layout);
-    };
- // Create a bubble chart that displays each sample.
         var trace2 = {
-            x:result.otu_ids,
-            y:result.sample_values
-            text:result.otu_labels,
+            x:otuids1,
+            y:sv1,
+            text:ol1,
             mode: "markers",
             marker: {
-                color:result.sample_values,
-                size: result.sample_values,
-            },
+                color:otuids1,
+                size:sv1,
+            }
 
         };
 
         var bubbles = [trace2];
 
         var layout2 = {
-            title:
-            xaxis: {title: "OTU ID" },
-            color:
+            title:"chart",
+            xaxis: {title: "OTU ID" }
+            // color:
         };
         Plotly.newPlot("bubble", bubbles, layout2);
+    });
+ // Create a bubble chart that displays each sample.
+       
     
     };
 
@@ -121,27 +127,3 @@ function optionChanged(newSelection) {
 }
 
 init();
-
-
-// Use sample_values for the y values.
-
-// Use sample_values for the marker size.
-
-// Use otu_ids for the marker colors.
-
-// Use otu_labels for the text values.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
